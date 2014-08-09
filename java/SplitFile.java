@@ -4,9 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-/**
- * Created by nichdel on 8/6/14.
- */
 public class SplitFile {
     final static String file_type = ".csv";
     final static String separator = ",";
@@ -21,7 +18,7 @@ public class SplitFile {
         try
         {
             Scanner in = new Scanner(new File(name + file_type));
-            parts = Separate(in.next());
+            parts = Arrays.asList(in.next().split(separator));
             in.close();
         }
         catch (IOException exception)
@@ -32,7 +29,7 @@ public class SplitFile {
             {
                 BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
                 SplitFile badHack;
-                badHack = new SplitFile(filename, Separate(in.readLine()));
+                badHack = new SplitFile(filename, Arrays.asList(in.readLine().split(separator)));
                 this.parts = badHack.parts;
 
             }
@@ -42,12 +39,13 @@ public class SplitFile {
             }
         }
     }
+
     public SplitFile(String filename, List<String> parts)
     {
         name = filename;
         this.parts = parts;
 
-        FileWriter out = null;
+        FileWriter out;
         try
         {
             out = new FileWriter(name + file_type);
@@ -69,14 +67,22 @@ public class SplitFile {
         }
     }
 
-    private List<String> Separate(String line)
+    private List<Long> Separate(String line)
     {
-        return Arrays.asList(line.split(separator));
+        final List<String> separated_strings = Arrays.asList(line.split(separator));
+
+        List<Long> separated_longs = new ArrayList<Long>();
+
+        for (String separated_string : separated_strings) {
+            separated_longs.add(Long.valueOf(separated_string));
+        }
+
+        return separated_longs;
     }
 
-    public List<List<String>> Trials()
+    public List<List<Long>> Trials()
     {
-        List<List<String>> list_of_line_lists = new ArrayList<List<String>>();
+        List<List<Long>> list_of_line_lists = new ArrayList<List<Long>>();
         try
         {
             Scanner in = new Scanner(new File(name + file_type));
@@ -117,5 +123,22 @@ public class SplitFile {
         {
             return false;
         }
+    }
+
+    public List<List<Float>> trialsInSeconds()
+    {
+        final List<List<Long>> trials = Trials();
+        List<List<Float>> inSeconds = new ArrayList<List<Float>>(trials.size());
+
+        for (int i=0; i < trials.size(); i++)
+        {
+            inSeconds.add(i, new ArrayList<Float>());
+            for (int j=0; j < trials.get(i).size(); j++)
+            {
+                inSeconds.get(i).add(((float) trials.get(i).get(j)) / 1000000000);
+            }
+        }
+
+        return inSeconds;
     }
 }

@@ -37,10 +37,12 @@ Currently, OSplitTE uses crtl+0 as a hotkey to both start the timer and time a s
 Roadmap
 =======
 
+    [ ] To-Do [o] Started [x] Completed
+
     Core
-        [ ] Improve Header Specia Symbol Support
-        [ ] Improve the code
-        [ ] Handle errors gracefully
+        [ ] Improve Header Special Symbol Support
+        [o] Improve the code
+        [o] Handle errors gracefully
     Graphical Edition
         [ ] Open/Create files
         [ ] Start/Stop/Reset/Advance timer
@@ -49,7 +51,7 @@ Roadmap
             [ ] Pictures, Words, System Variables
             [ ] Some Interface to allow others to easily make components
     Statistical
-        [ ] Basic SplitTimer Statistics (Personal Best, Best of Segments, Averages)
+        [o] Basic SplitTimer Statistics (Personal Best, Best of Segments, Averages)
         [ ] Advanced Statistics (Improvement over time, segment IQR and variance)
         [ ] Ability to generate a .csv with statistical summaries
     Dreams (AKA, Don't get your hopes up)

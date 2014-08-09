@@ -9,6 +9,7 @@ public class TerminalOSplit
     static SplitTimer timer;
     static SplitFile split;
     static long time;
+    static Provider provider;
 
     public static void main(String[] args)
     {
@@ -21,7 +22,7 @@ public class TerminalOSplit
             timer = null;
             split = new SplitFile(args[0]);
 
-            final Provider provider = Provider.getCurrentProvider(false);
+            provider = Provider.getCurrentProvider(false);
 
             HotKeyListener listener = new HotKeyListener() {
                 public void onHotKey(HotKey hotKey) {
@@ -30,6 +31,15 @@ public class TerminalOSplit
             };
 
             provider.register(KeyStroke.getKeyStroke("control 0"), listener);
+
+            if (!split.Trials().isEmpty())
+            {
+                System.out.print("Personal Best:");
+                System.out.println(SplitStats.PersonalBest(split.trialsInSeconds()));
+                System.out.print("Best of Segments:");
+                System.out.println(SplitStats.BestSegments(split.trialsInSeconds()));
+
+            }
         }
 
     }
@@ -39,7 +49,7 @@ public class TerminalOSplit
         if (timer == null)
         {
             timer = new SplitTimer(split.parts.size());
-            System.out.println("TIMER BEGAN");
+            System.out.println("TIMER STARTED");
             return false;
         }
         else
@@ -56,6 +66,9 @@ public class TerminalOSplit
                 System.out.print("TIMER RESULTS: ");
                 System.out.println(timer.times);
                 split.AppendLine(timer.times);
+                provider.reset();
+                provider.stop();
+                System.exit(0);
             }
             return true;
         }
