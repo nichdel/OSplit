@@ -1,14 +1,17 @@
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: I need to consider standardizing how these are calculated and displayed.
+// IE, BestSegments comes out in time between segments, but Personal Best does not.
+
 public class SplitStats
 {
-    public static List<Float> PersonalBest(List<List<Float>> splits)
+    public static List<Long> PersonalBest(List<List<Long>> splits)
     {
         final int split_lengths = splits.get(0).size();
-        List<Float> best_split = splits.get(0);
+        List<Long> best_split = splits.get(0);
 
-        for (List<Float> split : splits) {
+        for (List<Long> split : splits) {
             if (split.get(split_lengths - 1) < best_split.get(split_lengths - 1)) {
                 best_split = split;
             }
@@ -17,17 +20,19 @@ public class SplitStats
         return best_split;
     }
 
-    public static List<Float> BestSegments(List<List<Float>> splits)
+    public static List<Long> BestSegments(List<List<Long>> splits)
     {
         final int split_length = splits.get(0).size();
-        List<Float> best = new ArrayList<Float>();
+        final List<List<Long>> inSeconds = SplitFile.timeBetweenSegmentsForSplits(splits);
+
+        List<Long> best = new ArrayList<Long>();
 
         for (int i=0; i < splits.get(0).size();i++)
         {
-            best.add(splits.get(0).get(i));
+            best.add(inSeconds.get(0).get(i));
         }
 
-        for (List<Float> split : splits) {
+        for (List<Long> split : inSeconds) {
             for (int j = 0; j < split_length; j++) {
                 if (split.get(j) < best.get(j)) {
                     best.set(j, split.get(j));

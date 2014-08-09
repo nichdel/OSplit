@@ -125,20 +125,53 @@ public class SplitFile {
         }
     }
 
-    public List<List<Float>> trialsInSeconds()
+    public static List<Double> segmentsInSeconds(List<Long> trial)
     {
-        final List<List<Long>> trials = Trials();
-        List<List<Float>> inSeconds = new ArrayList<List<Float>>(trials.size());
+        List<Double> inSeconds = new ArrayList<Double>();
 
-        for (int i=0; i < trials.size(); i++)
+        for (Long segment : trial)
         {
-            inSeconds.add(i, new ArrayList<Float>());
-            for (int j=0; j < trials.get(i).size(); j++)
-            {
-                inSeconds.get(i).add(((float) trials.get(i).get(j)) / 1000000000);
-            }
+            inSeconds.add((double) segment / 1000000000);
         }
 
         return inSeconds;
+    }
+
+    public static List<List<Double>> splitsInSeconds(List<List<Long>> trials)
+    {
+        List<List<Double>> inSeconds = new ArrayList<List<Double>>();
+
+        for (List<Long> trial : trials)
+        {
+            inSeconds.add(segmentsInSeconds(trial));
+        }
+
+        return inSeconds;
+    }
+
+    public static List<Long> timeBetweenSegments(List<Long> split)
+    {
+        List<Long> segments_by_time = new ArrayList<Long>();
+
+        segments_by_time.add(split.get(0));
+
+        for (int i=1; i < split.size(); i++)
+        {
+            segments_by_time.add(split.get(i)-split.get(i-1));
+        }
+
+        return segments_by_time;
+    }
+
+    public static List<List<Long>> timeBetweenSegmentsForSplits(List<List<Long>> splits)
+    {
+        List<List<Long>> betweenSegments = new ArrayList<List<Long>>();
+
+        for (List<Long> split : splits)
+        {
+            betweenSegments.add(timeBetweenSegments(split));
+        }
+
+        return betweenSegments;
     }
 }

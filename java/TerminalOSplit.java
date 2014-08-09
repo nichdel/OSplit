@@ -35,9 +35,9 @@ public class TerminalOSplit
             if (!split.Trials().isEmpty())
             {
                 System.out.print("Personal Best:");
-                System.out.println(SplitStats.PersonalBest(split.trialsInSeconds()));
+                System.out.println(SplitFile.segmentsInSeconds(SplitFile.timeBetweenSegments(SplitStats.PersonalBest(split.Trials()))));
                 System.out.print("Best of Segments:");
-                System.out.println(SplitStats.BestSegments(split.trialsInSeconds()));
+                System.out.println(SplitFile.segmentsInSeconds(SplitStats.BestSegments(split.Trials())));
 
             }
         }
