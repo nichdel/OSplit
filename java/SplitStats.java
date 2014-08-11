@@ -42,4 +42,24 @@ public class SplitStats
 
         return best;
     }
+
+    public static List<Long> SegmentAverages(List<List<Long>> splits)
+    {
+        final int split_count = splits.size();
+        final int segments = splits.get(0).size();
+        List<Long> averaged_segments = new ArrayList<Long>();
+        final List<List<Long>> inSeconds = SplitFile.timeBetweenSegmentsForSplits(splits);
+
+        for (int i = 0; i < segments; i++)
+        {
+            long accumulator = 0;
+            for (List<Long> split : inSeconds)
+            {
+                accumulator += split.get(i);
+            }
+            averaged_segments.add(accumulator / (long) split_count);
+        }
+
+        return averaged_segments;
+    }
 }

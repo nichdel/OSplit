@@ -38,6 +38,8 @@ public class TerminalOSplit
                 System.out.println(SplitFile.segmentsInSeconds(SplitFile.timeBetweenSegments(SplitStats.PersonalBest(split.Trials()))));
                 System.out.print("Best of Segments:");
                 System.out.println(SplitFile.segmentsInSeconds(SplitStats.BestSegments(split.Trials())));
+                System.out.print("Averages:");
+                System.out.println(SplitFile.segmentsInSeconds(SplitStats.SegmentAverages(split.Trials())));
 
             }
         }
