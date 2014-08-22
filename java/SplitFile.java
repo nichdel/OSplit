@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Scanner;
 
 public class SplitFile {
-    final static String file_type = ".csv";
     final static String separator = ",";
 
     public String name;
@@ -13,11 +12,12 @@ public class SplitFile {
 
     public SplitFile(String filename)
     {
+        // FIXME: Refer to name and absolute path separately
         name = filename;
 
         try
         {
-            Scanner in = new Scanner(new File(name + file_type));
+            Scanner in = new Scanner(new File(name));
             parts = Arrays.asList(in.next().split(separator));
             in.close();
         }
@@ -48,7 +48,7 @@ public class SplitFile {
         FileWriter out;
         try
         {
-            out = new FileWriter(name + file_type);
+            out = new FileWriter(name);
 
             for (int i = 0; i < parts.size(); i++)
             {
@@ -85,7 +85,7 @@ public class SplitFile {
         List<List<Long>> list_of_line_lists = new ArrayList<List<Long>>();
         try
         {
-            Scanner in = new Scanner(new File(name + file_type));
+            Scanner in = new Scanner(new File(name));
             in.next(); // Disregard the first line.
             while (in.hasNext())
             {
@@ -104,7 +104,7 @@ public class SplitFile {
     {
         try
         {
-            FileWriter out = new FileWriter(name + file_type, true);
+            FileWriter out = new FileWriter(name, true);
 
             for (int i = 0; i < entries.size(); i++)
             {

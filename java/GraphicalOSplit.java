@@ -26,7 +26,7 @@ public class GraphicalOSplit
 
             if (!split.Trials().isEmpty())
             {
-                // TODO: Standardize this shit.
+                // FIXME: Standardize this shit.
                 System.out.print("Personal Best:");
                 System.out.println(SplitFile.segmentsInSeconds(SplitFile.timeBetweenSegments(SplitStats.PersonalBest(split.Trials()))));
                 System.out.print("Best of Segments:");
@@ -36,12 +36,5 @@ public class GraphicalOSplit
 
             }
         }
-
-
-        final MainFrame frame = new MainFrame(split);
-
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500,500);
-        frame.setVisible(true);
     }
 }

@@ -51,7 +51,7 @@ Roadmap
 
     1.0
 
-    [o] File I/O
+    [o] File I/O (A)
         [x] Open and Close Files
         [x] Create Files
         [x] Append Splits to Files
@@ -62,7 +62,7 @@ Roadmap
         [x] Start and advance timer
         [x] Show statistics upon opening an existing file
     [o] Graphical Edition
-        [ ] Open/Create files
+        [o] Open/Create files
         [o] Start/Stop/Reset/Advance timer
         [ ] Ability to see statistical summaries
             [ ] Ability to compare two SplitFiles

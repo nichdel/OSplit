@@ -161,6 +161,7 @@ public class SplitPanel extends JPanel
     public void RegisterHotkeys()
     {
         // FIXME: Am I supposed to release these when this panel closes? Probably.
+        // TODO: Yes, it breaks if I don't.
         final Provider provider = Provider.getCurrentProvider(false);
 
         HotKeyListener listener = new HotKeyListener() {
@@ -186,6 +187,6 @@ public class SplitPanel extends JPanel
                 }
             }
         };
-        provider.register(KeyStroke.getKeyStroke("control 0"), listener);
+        provider.register(KeyStroke.getKeyStroke("control shift s"), listener);
     }
 }
