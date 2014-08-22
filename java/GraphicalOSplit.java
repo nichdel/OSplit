@@ -1,20 +1,23 @@
-import com.tulskiy.keymaster.common.HotKey;
-import com.tulskiy.keymaster.common.HotKeyListener;
-import com.tulskiy.keymaster.common.Provider;
-
 import javax.swing.*;
 
 public class GraphicalOSplit
 {
     static SplitTimer timer;
     static SplitFile split;
-    static Provider provider;
 
     public static void main(String[] args)
     {
-        if (args.length != 1)
+        if (args.length > 1)
         {
             System.out.println("Too few or too many arguments. Please run with exactly one argument, the name of a .csv file containing split information.");
+        }
+        else if (args.length == 0)
+        {
+            final MainFrame frame = new MainFrame();
+
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setSize(500,500);
+            frame.setVisible(true);
         }
         else
         {
@@ -23,6 +26,7 @@ public class GraphicalOSplit
 
             if (!split.Trials().isEmpty())
             {
+                // TODO: Standardize this shit.
                 System.out.print("Personal Best:");
                 System.out.println(SplitFile.segmentsInSeconds(SplitFile.timeBetweenSegments(SplitStats.PersonalBest(split.Trials()))));
                 System.out.print("Best of Segments:");
@@ -33,40 +37,11 @@ public class GraphicalOSplit
             }
         }
 
-        final SplitFrame frame = new SplitFrame(split);
+
+        final MainFrame frame = new MainFrame(split);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(500,500);
-
         frame.setVisible(true);
-
-        provider = Provider.getCurrentProvider(false);
-
-        HotKeyListener listener = new HotKeyListener() {
-            public void onHotKey(HotKey hotKey) {
-                if (!frame.started)
-                {
-                    timer = new SplitTimer(split.parts.size());
-                    frame.StartTiming();
-                }
-                else
-                {
-                    if (!frame.finished)
-                    {
-                        long result = timer.TimeSegment();
-                        frame.AdvanceSplit(result);
-                    }
-                    else
-                    {
-                        split.AppendLine(timer.times);
-                        provider.reset();
-                        provider.stop();
-                        System.exit(0);
-                    }
-                }
-            }
-        };
-
-        provider.register(KeyStroke.getKeyStroke("control 0"), listener);
     }
 }

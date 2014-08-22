@@ -6,6 +6,7 @@ import java.util.List;
 
 public class SplitStats
 {
+
     public static List<Long> PersonalBest(List<List<Long>> splits)
     {
         final int split_lengths = splits.get(0).size();

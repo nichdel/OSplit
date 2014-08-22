@@ -24,7 +24,7 @@ So far there exists only a terminal edition. The terminal edition has received s
 
 The terminal edition is used with the following invocation:
 
-    java -jar OSplitTE.jar *SplitFileName*
+    java -jar OSplitTE.jar SplitFileName
     
 SplitFileName corresponds to either an existing SplitFileName.csv or one created by OSplit. When prompted to provide headers (which correspond to segments), they should be provided in the form:
 
@@ -61,9 +61,9 @@ Roadmap
         [x] Open/Create files
         [x] Start and advance timer
         [x] Show statistics upon opening an existing file
-    [ ] Graphical Edition
+    [o] Graphical Edition
         [ ] Open/Create files
-        [ ] Start/Stop/Reset/Advance timer
+        [o] Start/Stop/Reset/Advance timer
         [ ] Ability to see statistical summaries
             [ ] Ability to compare two SplitFiles
         [ ] Highly Customizable Interface
@@ -76,6 +76,9 @@ Roadmap
         [ ] Advanced Statistics (Improvement over time, segment IQR and variance)
         [ ] Ability to generate a .csv with statistical summaries
         [ ] Run predictor
+    [ ] Compatibility
+        [ ] Import splits from other SplitTimers
+        [ ] Export to other formats?
 
     1.X
 

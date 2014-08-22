@@ -1,3 +1,7 @@
+import com.tulskiy.keymaster.common.HotKey;
+import com.tulskiy.keymaster.common.HotKeyListener;
+import com.tulskiy.keymaster.common.Provider;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -5,33 +9,34 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SplitFrame extends JFrame
+public class SplitPanel extends JPanel
 {
-    private JPanel panel;
-    private JPanel split_panel;
-    private JLabel title;
-    private List<JLabel> label_list;
+    private static final long CENTISECOND = 10000000;
+
     private List<JLabel> time_list;
     private int current;
     private long time;
     private JLabel total;
     private Timer timer;
+    private SplitTimer splitTimer;
+    private SplitFile split;
     public boolean started = false;
     public boolean finished = false;
 
-    public SplitFrame(SplitFile split)
+    public SplitPanel(SplitFile split)
     {
+        this.split = split;
         final int rows = split.parts.size();
-        panel = new JPanel();
+        JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
-        title = new JLabel(split.name, JLabel.CENTER);
+        JLabel title = new JLabel(split.name, JLabel.CENTER);
         panel.add(title, BorderLayout.NORTH);
 
-        split_panel = new JPanel();
+        JPanel split_panel = new JPanel();
         split_panel.setLayout(new GridLayout(rows, 2));
 
-        label_list = new ArrayList<JLabel>();
+        List<JLabel> label_list = new ArrayList<JLabel>();
         time_list = new ArrayList<JLabel>();
         for (String segment : split.parts)
         {
@@ -47,20 +52,23 @@ public class SplitFrame extends JFrame
 
         panel.add(split_panel, BorderLayout.CENTER);
 
-        total = new JLabel("", JLabel.CENTER);
+        total = new JLabel("...", JLabel.CENTER);
         panel.add(total, BorderLayout.SOUTH);
 
-        add(panel);
+        setLayout(new BorderLayout());
+        add(panel, BorderLayout.CENTER);
+
+        RegisterHotkeys();
     }
 
     public void StartTiming()
     {
         timer = new Timer(10, null);
-        time = 10000000;
+        time = CENTISECOND;
         ActionListener listener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                time += 10000000;
+                time += CENTISECOND;
                 String timed = NanoToString(time);
                 total.setText(timed);
                 time_list.get(current).setText(timed);
@@ -71,7 +79,8 @@ public class SplitFrame extends JFrame
         started = true;
     }
 
-    public void AdvanceSplit(long final_time)
+    // FIXME: Rewrite this such that it returns a true or false dependent on whether there is a remaining time.
+    public boolean AdvanceSplit(long final_time)
     {
         time_list.get(current).setText(NanoToString(final_time));
         current++;
@@ -82,21 +91,27 @@ public class SplitFrame extends JFrame
             finished = true;
             total.setText(NanoToString(final_time));
         }
+
+        return true;
     }
 
     private static String NanoToString(long nanoseconds)
     {
-        final long CENTISECOND = 10000000;
+        // Constants for units of time. Self explanatory.
         final long SECOND = 100 * CENTISECOND;
         final long MINUTE = 60 * SECOND;
         final long HOUR = 60 * MINUTE;
         final long DAY = 24 * HOUR;
+
+        // We subtract from this one
+        // We need to continue to know the total to avoid, ie, omitting the seconds slot when there's exactly 4 minutes.
         long ns = nanoseconds;
 
         String in_string = "";
 
         long milliseconds, seconds, minutes, hours, days;
 
+        // FIXME: Maybe this can be done in reverse, avoiding the two counts of nanoseconds.
         if (nanoseconds >= DAY)
         {
             days = ns / DAY;
@@ -141,5 +156,36 @@ public class SplitFrame extends JFrame
         }
 
         return num;
+    }
+
+    public void RegisterHotkeys()
+    {
+        // FIXME: Am I supposed to release these when this panel closes? Probably.
+        final Provider provider = Provider.getCurrentProvider(false);
+
+        HotKeyListener listener = new HotKeyListener() {
+            public void onHotKey(HotKey hotKey) {
+                if (!started)
+                {
+                    splitTimer = new SplitTimer(split.parts.size());
+                    StartTiming();
+                }
+                else
+                {
+                    if (!finished)
+                    {
+                        AdvanceSplit(splitTimer.TimeSegment());
+                    }
+                    else
+                    {
+                        split.AppendLine(splitTimer.times);
+                        provider.reset();
+                        provider.stop();
+                        System.exit(0);
+                    }
+                }
+            }
+        };
+        provider.register(KeyStroke.getKeyStroke("control 0"), listener);
     }
 }

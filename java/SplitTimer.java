@@ -1,10 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by nichdel on 8/6/14.
- */
-
 
 public class SplitTimer
 {
@@ -37,14 +33,7 @@ public class SplitTimer
 
     public boolean isCounting()
     {
-        if (i >= parts)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+        return i < parts;
     }
 
 
