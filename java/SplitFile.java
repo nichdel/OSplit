@@ -7,24 +7,25 @@ import java.util.Scanner;
 public class SplitFile {
     final static String separator = ",";
 
+    public String file_path;
     public String name;
     public List<String> parts;
 
     public SplitFile(String filename)
     {
-        // FIXME: Refer to name and absolute path separately
-        name = filename;
+        // FIXME: Refer to file_path and name separately
+        file_path = filename;
 
         try
         {
-            Scanner in = new Scanner(new File(name));
+            Scanner in = new Scanner(new File(file_path));
             parts = Arrays.asList(in.next().split(separator));
             in.close();
         }
         catch (IOException exception)
         {
             System.out.println("Could not open file, it may not exist.");
-            System.out.println("Attempting to create a new file with the given name. Please provide the headers");
+            System.out.println("Attempting to create a new file with the given file_path. Please provide the headers");
             try
             {
                 BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
@@ -42,13 +43,13 @@ public class SplitFile {
 
     public SplitFile(String filename, List<String> parts)
     {
-        name = filename;
+        file_path = filename;
         this.parts = parts;
 
         FileWriter out;
         try
         {
-            out = new FileWriter(name);
+            out = new FileWriter(file_path);
 
             for (int i = 0; i < parts.size(); i++)
             {
@@ -63,7 +64,8 @@ public class SplitFile {
         }
         catch (IOException exception)
         {
-            System.out.println("Sorry, there was a problem creating the file. It may already exist.");
+            System.out.println("Something went very wrong. If this happens more than once go to " +
+                    "https://github.com/nichdel/OSplit/issues and chew my ear off.");
         }
     }
 
@@ -85,7 +87,7 @@ public class SplitFile {
         List<List<Long>> list_of_line_lists = new ArrayList<List<Long>>();
         try
         {
-            Scanner in = new Scanner(new File(name));
+            Scanner in = new Scanner(new File(file_path));
             in.next(); // Disregard the first line.
             while (in.hasNext())
             {
@@ -104,7 +106,7 @@ public class SplitFile {
     {
         try
         {
-            FileWriter out = new FileWriter(name, true);
+            FileWriter out = new FileWriter(file_path, true);
 
             for (int i = 0; i < entries.size(); i++)
             {

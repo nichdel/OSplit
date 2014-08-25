@@ -51,7 +51,7 @@ Roadmap
 
     1.0
 
-    [o] File I/O (A)
+    [o] File I/O
         [x] Open and Close Files
         [x] Create Files
         [x] Append Splits to Files
@@ -62,7 +62,7 @@ Roadmap
         [x] Start and advance timer
         [x] Show statistics upon opening an existing file
     [o] Graphical Edition
-        [o] Open/Create files
+        [o] Open/Create/Edit files
         [o] Start/Stop/Reset/Advance timer
         [ ] Ability to see statistical summaries
             [ ] Ability to compare two SplitFiles
@@ -76,12 +76,14 @@ Roadmap
         [ ] Advanced Statistics (Improvement over time, segment IQR and variance)
         [ ] Ability to generate a .csv with statistical summaries
         [ ] Run predictor
-    [ ] Compatibility
-        [ ] Import splits from other SplitTimers
-        [ ] Export to other formats?
 
     1.X
 
     [ ] Dreams (AKA, Don't get your hopes up)
         [ ] OBS-Studio Plugin
         [ ] SpeedRunsLive Integration
+    [ ] Compatibility
+        [ ] Import splits from other SplitTimers
+        [ ] Import splits from websites?
+        [ ] Export to other formats (if wanted)
+        [ ] ASUP Protocol Support

@@ -1,40 +1,29 @@
 import javax.swing.*;
+import java.io.File;
 
+// FIXME: Perhaps move all the numeric conversions to a Time.java class?
+// FIXME: Learn best practice for comments in Java.
 public class GraphicalOSplit
 {
-    static SplitTimer timer;
-    static SplitFile split;
+    private static MainFrame frame;
 
     public static void main(String[] args)
     {
         if (args.length > 1)
-        {
-            System.out.println("Too few or too many arguments. Please run with exactly one argument, the name of a .csv file containing split information.");
-        }
+            System.out.println("Too many arguments. Run with one argument (a splitfile)" +
+                    " or no arguments and choose a file with the GUI.");
         else if (args.length == 0)
-        {
-            final MainFrame frame = new MainFrame();
-
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(500,500);
-            frame.setVisible(true);
-        }
+            frame = new MainFrame();
+        else if (new File(args[0]).isFile())
+            frame = new MainFrame(new SplitFile(args[0]));
         else
-        {
-            timer = null;
-            split = new SplitFile(args[0]);
+            System.out.println("File does not exist. Either specify an existing file or run without arguments" +
+                    "and create a file within the GUI.");
 
-            if (!split.Trials().isEmpty())
-            {
-                // FIXME: Standardize this shit.
-                System.out.print("Personal Best:");
-                System.out.println(SplitFile.segmentsInSeconds(SplitFile.timeBetweenSegments(SplitStats.PersonalBest(split.Trials()))));
-                System.out.print("Best of Segments:");
-                System.out.println(SplitFile.segmentsInSeconds(SplitStats.BestSegments(split.Trials())));
-                System.out.print("Averages:");
-                System.out.println(SplitFile.segmentsInSeconds(SplitStats.SegmentAverages(split.Trials())));
-
-            }
-        }
+        // FIXME: Is it best practice to put these here or in the Frame constructor?
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // FIXME: More appropriate dimensions (for the 99% that use a floating wm)
+        frame.setSize(500,500);
+        frame.setVisible(true);
     }
 }

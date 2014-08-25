@@ -22,6 +22,7 @@ public class SplitPanel extends JPanel
     private SplitFile split;
     public boolean started = false;
     public boolean finished = false;
+    Provider provider = Provider.getCurrentProvider(true);
 
     public SplitPanel(SplitFile split)
     {
@@ -30,7 +31,7 @@ public class SplitPanel extends JPanel
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
-        JLabel title = new JLabel(split.name, JLabel.CENTER);
+        JLabel title = new JLabel(split.file_path, JLabel.CENTER);
         panel.add(title, BorderLayout.NORTH);
 
         JPanel split_panel = new JPanel();
@@ -145,25 +146,8 @@ public class SplitPanel extends JPanel
         return in_string;
     }
 
-    private static String AddLeadingZeros(long number, int digits)
-    {
-        String num = String.valueOf(number);
-        int zeros = digits - num.length();
-
-        for (int i=0; i < zeros; i++)
-        {
-            num = 0 + num;
-        }
-
-        return num;
-    }
-
     public void RegisterHotkeys()
     {
-        // FIXME: Am I supposed to release these when this panel closes? Probably.
-        // TODO: Yes, it breaks if I don't.
-        final Provider provider = Provider.getCurrentProvider(false);
-
         HotKeyListener listener = new HotKeyListener() {
             public void onHotKey(HotKey hotKey) {
                 if (!started)
@@ -181,12 +165,27 @@ public class SplitPanel extends JPanel
                     {
                         split.AppendLine(splitTimer.times);
                         provider.reset();
-                        provider.stop();
-                        System.exit(0);
                     }
                 }
             }
         };
-        provider.register(KeyStroke.getKeyStroke("control shift s"), listener);
+        provider.register(KeyStroke.getKeyStroke("shift S"), listener);
+    }
+
+    private static String AddLeadingZeros(long number, int digits)
+    {
+        String num = String.valueOf(number);
+        int zeros = digits - num.length();
+
+        for (int i = 0; i < zeros; i++) {
+            num = 0 + num;
+        }
+        return num;
+    }
+
+    public void UnregisterHotkeys()
+    {
+        provider.reset();
+        provider.stop();
     }
 }

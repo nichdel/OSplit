@@ -3,7 +3,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-// TODO: Make a panel specifically for file opening, closing, and editing
 public class MainFrame extends JFrame
 {
 
@@ -14,6 +13,7 @@ public class MainFrame extends JFrame
 
     JButton fileButton;
     JButton splitButton;
+    JButton statsButton;
 
     public MainFrame(final SplitFile split)
     {
@@ -21,10 +21,6 @@ public class MainFrame extends JFrame
         setLayout(new BorderLayout());
 
         CreateMenu();
-
-        final SplitPanel frame = new SplitPanel(split);
-
-        add(frame, BorderLayout.CENTER);
     }
 
     public MainFrame()
@@ -41,60 +37,81 @@ public class MainFrame extends JFrame
 
         jToolBar.setFloatable(false);
 
+        // FilePanel
+
         ActionListener fileButtonAction = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                FilePanel filePanel = new FilePanel(currentSplit);
-                currentSplit = filePanel.currentSplit;
-                SwapPanels(filePanel);
+                SwapPanels();
+                currentPanel = new FilePanel(currentSplit);
+                add(currentPanel, BorderLayout.CENTER);
+                revalidate();
             }
         };
+
+
 
         fileButton = new JButton("File");
         fileButton.addActionListener(fileButtonAction);
         jToolBar.add(fileButton);
 
+        // SplitPanel
+
         ActionListener splitButtonAction = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                SwapPanels(new SplitPanel(currentSplit));
+                SwapPanels();
+                currentPanel = new SplitPanel(currentSplit);
+                add(currentPanel, BorderLayout.CENTER);
+                setVisible(true);
+                revalidate();
             }
         };
 
         splitButton = new JButton("Timer");
         splitButton.addActionListener(splitButtonAction);
         jToolBar.add(splitButton);
-        splitButton.setEnabled(false);
+        splitButton.setEnabled(currentSplit != null);
 
+        // StatsPanel
+
+        statsButton = new JButton("Stats");
+        // statsButton.addActionListener();
+        jToolBar.add(statsButton);
+        statsButton.setEnabled(currentSplit != null);
+
+        // Hide/Show Button
 
         jToolBar.add(Box.createHorizontalGlue());
         // FIXME: Make this not a lie.
-        final JLabel hideNote = new JLabel("Press Esc to show or hide this bar.");
+        final JLabel hideNote = new JLabel("");
         jToolBar.add(hideNote);
 
         add(jToolBar, BorderLayout.NORTH);
 
     }
 
-    private void SwapPanels(JPanel newPanel)
+    private void SwapPanels()
     {
+        // FIXME: Figure out the best way to pass and instantiate classes with parameters
+        if (currentPanel instanceof SplitPanel)
+        {
+            ((SplitPanel) currentPanel).UnregisterHotkeys();
+        }
+        else if (currentPanel instanceof FilePanel)
+        {
+            currentSplit = ((FilePanel) currentPanel).currentSplit;
+        }
         if (currentPanel != null)
         {
             remove(currentPanel);
         }
-        currentPanel = newPanel;
-        add(currentPanel, BorderLayout.CENTER);
-        setVisible(true);
 
-        if (currentSplit == null)
-        {
-            splitButton.setEnabled(false);
-        }
-        else
-        {
-            splitButton.setEnabled(true);
-        }
+        boolean splitOpened = (currentSplit != null);
+
+        splitButton.setEnabled(splitOpened);
+        statsButton.setEnabled(splitOpened);
     }
 }

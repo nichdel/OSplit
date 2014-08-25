@@ -15,7 +15,8 @@ public class TerminalOSplit
     {
         if (args.length != 1)
         {
-            System.out.println("Too few or too many arguments. Please run with exactly one argument, the name of a .csv file containing split information.");
+            System.out.println("Too few or too many arguments. Please run with exactly one argument, " +
+                    "the file_path of a .csv file containing split information.");
         }
         else
         {

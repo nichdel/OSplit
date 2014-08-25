@@ -35,6 +35,4 @@ public class SplitTimer
     {
         return i < parts;
     }
-
-
 }

@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: I need to consider standardizing how these are calculated and displayed.
+// FIXME: I need to consider standardizing how these are calculated and displayed.
 // IE, BestSegments comes out in time between segments, but Personal Best does not.
 
 public class SplitStats
