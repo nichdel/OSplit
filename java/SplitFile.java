@@ -8,7 +8,6 @@ public class SplitFile {
     final static String separator = ",";
 
     public String file_path;
-    public String name;
     public List<String> parts;
 
     public SplitFile(String filename)
@@ -19,7 +18,8 @@ public class SplitFile {
         try
         {
             Scanner in = new Scanner(new File(file_path));
-            parts = Arrays.asList(in.next().split(separator));
+            parts = Arrays.asList(in.nextLine().split(separator));
+            System.out.println(parts);
             in.close();
         }
         catch (IOException exception)
@@ -44,6 +44,10 @@ public class SplitFile {
     public SplitFile(String filename, List<String> parts)
     {
         file_path = filename;
+        if (!file_path.contains(".csv"))
+        {
+            file_path += ".csv";
+        }
         this.parts = parts;
 
         FileWriter out;
@@ -72,6 +76,7 @@ public class SplitFile {
     private List<Long> Separate(String line)
     {
         final List<String> separated_strings = Arrays.asList(line.split(separator));
+        System.out.println(separated_strings);
 
         List<Long> separated_longs = new ArrayList<Long>();
 
@@ -88,7 +93,7 @@ public class SplitFile {
         try
         {
             Scanner in = new Scanner(new File(file_path));
-            in.next(); // Disregard the first line.
+            in.nextLine(); // Disregard the first line.
             while (in.hasNext())
             {
                 list_of_line_lists.add(Separate(in.next()));

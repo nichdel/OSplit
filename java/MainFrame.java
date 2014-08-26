@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+// FIXME: Move the provider declarations here so they're available for panels.
 public class MainFrame extends JFrame
 {
 

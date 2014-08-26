@@ -3,6 +3,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,13 +68,17 @@ public class FilePanel extends JPanel
                 int returnVal = chooser.showOpenDialog((java.awt.Component) e.getSource());
                 if(returnVal == JFileChooser.APPROVE_OPTION)
                 {
-                    currentSplit = new SplitFile(chooser.getSelectedFile().getAbsolutePath());
-                    segmentList = new ArrayList<List<Long>>();
-                    for (List<Long> trial : currentSplit.Trials())
+                    File f = new File(chooser.getSelectedFile().getAbsolutePath());
+                    if (f.exists())
                     {
-                        segmentList.add(trial);
+                        currentSplit = new SplitFile(chooser.getSelectedFile().getAbsolutePath());
+                        segmentList = new ArrayList<List<Long>>();
+                        for (List<Long> trial : currentSplit.Trials()) {
+                            segmentList.add(trial);
+                        }
+                        headerList = new ArrayList<String>(currentSplit.parts);
+                        UpdateListings();
                     }
-                    UpdateListings();
                 }
             }
 
@@ -126,20 +131,30 @@ public class FilePanel extends JPanel
 
     private JPanel Listings()
     {
+
+        JPanel listingWrapPanel = new JPanel();
+        listingWrapPanel.setLayout(new BorderLayout());
+
+        if (listingPanel != null)
+        {
+            listingPanel.getParent().remove(listingPanel);
+        }
+
         listingPanel = new JPanel();
         listingPanel.setLayout(new BorderLayout());
 
         if (currentSplit != null)
         {
             // Headers
+
+            // TODO: Header names don't allow for spaces and symbols.
             final JPanel headers = new JPanel();
             headers.setLayout(new GridLayout(1, currentSplit.parts.size()+1));
 
             headerEditors = new ArrayList<JTextArea>();
 
-            for (int i=0; i < headerList.size(); i++)
-            {
-                JTextArea jTextArea = new JTextArea(headerList.get(i));
+            for (String aHeaderList : headerList) {
+                JTextArea jTextArea = new JTextArea(aHeaderList);
                 headerEditors.add(jTextArea);
 
                 headers.add(jTextArea);
@@ -215,7 +230,7 @@ public class FilePanel extends JPanel
                 {
                     if (inSeconds)
                         for (Double segment : SplitFile.segmentsInSeconds(trial)) {
-                            segments.add(new JLabel(segment.toString()));
+                            segments.add(new JLabel((String.valueOf((double) Math.round(segment * 1000) / 1000))));
                         }
                     else
                         for (Long segment : trial) {
@@ -229,9 +244,10 @@ public class FilePanel extends JPanel
                 }
             }
             listingPanel.add(segments, BorderLayout.CENTER);
+            listingWrapPanel.add(listingPanel, BorderLayout.NORTH);
         }
 
-        return listingPanel;
+        return listingWrapPanel;
     }
 
     private JPanel ViewControls()
