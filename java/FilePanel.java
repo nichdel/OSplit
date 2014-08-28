@@ -126,6 +126,25 @@ public class FilePanel extends JPanel
         save.addActionListener(saveAction);
         filePanel.add(save);
 
+        ActionListener CreateNew = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                headerList = new ArrayList<String>();
+                headerList.add("Unknown");
+
+                segmentList = new ArrayList<List<Long>>();
+
+                currentSplit = new SplitFile("temp_splits", headerList);
+
+                UpdateListings();
+            }
+        };
+
+        JButton create = new JButton("Create New");
+        create.addActionListener(CreateNew);
+        filePanel.add(create);
+
         return filePanel;
 
     }
