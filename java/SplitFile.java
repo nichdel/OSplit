@@ -19,7 +19,6 @@ public class SplitFile {
         {
             Scanner in = new Scanner(new File(file_path));
             parts = Arrays.asList(in.nextLine().split(separator));
-            System.out.println(parts);
             in.close();
         }
         catch (IOException exception)
@@ -76,7 +75,6 @@ public class SplitFile {
     private List<Long> Separate(String line)
     {
         final List<String> separated_strings = Arrays.asList(line.split(separator));
-        System.out.println(separated_strings);
 
         List<Long> separated_longs = new ArrayList<Long>();
 

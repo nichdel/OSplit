@@ -82,6 +82,7 @@ public class MainFrame extends JFrame
         // statsButton.addActionListener();
         jToolBar.add(statsButton);
         statsButton.setEnabled(currentSplit != null);
+        statsButton.setVisible(false);
 
         // Hide/Show Button
 

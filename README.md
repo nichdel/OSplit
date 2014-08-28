@@ -15,7 +15,11 @@ OSplit records split times in .csv files, which are a standard file format for t
 Graphical Edition
 =================
 
-Coming soon to a repository near you.
+The GUI is still lacking features, but very much useable. It can be opened via the command line with "java -jar OSplit.jar" but your Operating System of choice likely will open Java programs with a double click.
+
+The Timing page uses shift+s to start the timer, split, and save the timings (after the timer has stopped).
+
+The File page allows you to open and save files as well as deleting splits and editing the headers. Note that changes made to a file are not remembered on other pages until you save the file.
 
 Terminal Edition
 ================
@@ -30,7 +34,7 @@ SplitFileName corresponds to either an existing SplitFileName.csv or one created
 
     PartOne,PartTwo,PartThree
     
-Some special symbols work, but as of right now spaces do not.
+I'm unsure of how many special symbols work, but spaces do.
 
 Currently, OSplitTE uses crtl+0 as the only hotkey. When first pressed, it starts the timer. Every press after that records a segment. After the last segment is recorded, the final press will print the segment times (in nanoseconds) and the program will close.
 The .csv created will record times in nanoseconds from the time the timer started. PB and BS are reported when running with an existing splitfile, in seconds per segment.
@@ -56,14 +60,14 @@ Roadmap
         [x] Create Files
         [x] Append Splits to Files
         [x] Read Files
-        [ ] Adapt to changes
     [x] Terminal Edition
         [x] Open/Create files
         [x] Start and advance timer
         [x] Show statistics upon opening an existing file
     [o] Graphical Edition
-        [o] Open/Create/Edit files
-        [o] Start/Stop/Reset/Advance timer
+        [x] Open/Create/Edit files
+        [x] Start/Advance timer
+        [ ] Stop/Reset
         [ ] Ability to see statistical summaries
             [ ] Ability to compare two SplitFiles
         [ ] Highly Customizable Interface

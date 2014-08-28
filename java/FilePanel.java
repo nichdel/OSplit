@@ -23,26 +23,27 @@ public class FilePanel extends JPanel
     JPanel listingPanel;
     JPanel viewPanel;
 
+    JButton save;
+
     public FilePanel(SplitFile currentSplit)
     {
         setLayout(new BorderLayout());
 
         this.currentSplit = currentSplit;
 
-        segmentList = new ArrayList<List<Long>>();
+        if (currentSplit != null) {
+            segmentList = new ArrayList<List<Long>>();
 
-        for (List<Long> trial : currentSplit.Trials())
-        {
-            segmentList.add(trial);
+            for (List<Long> trial : currentSplit.Trials()) {
+                segmentList.add(trial);
+            }
+
+            headerList = new ArrayList<String>();
+
+            for (String part : currentSplit.parts) {
+                headerList.add(part);
+            }
         }
-
-        headerList = new ArrayList<String>();
-
-        for (String part : currentSplit.parts)
-        {
-            headerList.add(part);
-        }
-
         // FILE IO
         add(FileControls(), BorderLayout.NORTH);
 
@@ -121,7 +122,7 @@ public class FilePanel extends JPanel
 
         };
 
-        JButton save = new JButton("Save");
+        save = new JButton("Save");
         save.addActionListener(saveAction);
         filePanel.add(save);
 
@@ -140,14 +141,14 @@ public class FilePanel extends JPanel
             listingPanel.getParent().remove(listingPanel);
         }
 
-        listingPanel = new JPanel();
-        listingPanel.setLayout(new BorderLayout());
 
         if (currentSplit != null)
         {
+            listingPanel = new JPanel();
+            listingPanel.setLayout(new BorderLayout());
+
             // Headers
 
-            // TODO: Header names don't allow for spaces and symbols.
             final JPanel headers = new JPanel();
             headers.setLayout(new GridLayout(1, currentSplit.parts.size()+1));
 
@@ -161,12 +162,13 @@ public class FilePanel extends JPanel
             }
 
             JPanel addRemove = new JPanel();
+            addRemove.setLayout(new GridLayout(2,1));
 
             ActionListener addHeader = new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e)
                 {
-                    headerList.add("");
+                    headerList.add("Unnamed");
                     for (List<Long> trial : segmentList)
                     {
                         trial.add((long) 0);
@@ -246,6 +248,10 @@ public class FilePanel extends JPanel
             listingPanel.add(segments, BorderLayout.CENTER);
             listingWrapPanel.add(listingPanel, BorderLayout.NORTH);
         }
+        else
+        {
+            save.setEnabled(false);
+        }
 
         return listingWrapPanel;
     }
@@ -285,12 +291,25 @@ public class FilePanel extends JPanel
 
     private void UpdateListings()
     {
-        for (int i=0; i < headerEditors.size() && i < headerList.size(); i++)
-        {
-            headerList.set(i, headerEditors.get(i).getText());
+        if (currentSplit != null) {
+            if (headerEditors == null)
+            {
+                headerEditors = new ArrayList<JTextArea>();
+            }
+            for (int i = 0; i < headerEditors.size() && i < headerList.size(); i++) {
+                headerList.set(i, headerEditors.get(i).getText());
+            }
+            if (listingPanel != null)
+                remove(listingPanel);
+            add(Listings(), BorderLayout.CENTER);
+            revalidate();
+            save.setEnabled(true);
+            ((MainFrame) this.getTopLevelAncestor()).splitButton.setEnabled(true);
+            ((MainFrame) this.getTopLevelAncestor()).statsButton.setEnabled(true);
         }
-        remove(listingPanel);
-        add(Listings(), BorderLayout.CENTER);
-        revalidate();
+        else
+        {
+            save.setEnabled(false);
+        }
     }
 }
