@@ -9,13 +9,15 @@ import java.util.List;
 
 public class FilePanel extends JPanel
 {
-    public SplitFile currentSplit;
+    private SplitFile current_splitfile;
 
     private List<String> headerList;
     private List<List<Long>> segmentList;
     private List<JTextArea> headerEditors;
     private List<JButton> segmentRemovers;
 
+    // These control (and set the defaults of) the way that split timings are viewed
+    // TODO: Replace seconds with the human readable time function in SplitMath
     private boolean inSeconds = true;
     private boolean betweenSegments = true;
 
@@ -25,25 +27,30 @@ public class FilePanel extends JPanel
 
     JButton save;
 
-    public FilePanel(SplitFile currentSplit)
+    /**
+     *
+     * @param current_splitfile
+     */
+    public FilePanel(SplitFile current_splitfile)
     {
         setLayout(new BorderLayout());
 
-        this.currentSplit = currentSplit;
-
-        if (currentSplit != null) {
+        if (current_splitfile != null) {
+            // THIS IS AN INTENTIONAL HACK
+            this.current_splitfile = current_splitfile;
             segmentList = new ArrayList<List<Long>>();
 
-            for (List<Long> trial : currentSplit.Trials()) {
+            for (List<Long> trial : current_splitfile.Trials()) {
                 segmentList.add(trial);
             }
 
             headerList = new ArrayList<String>();
 
-            for (String part : currentSplit.parts) {
+            for (String part : current_splitfile.headers) {
                 headerList.add(part);
             }
         }
+
         // FILE IO
         add(FileControls(), BorderLayout.NORTH);
 
@@ -72,12 +79,12 @@ public class FilePanel extends JPanel
                     File f = new File(chooser.getSelectedFile().getAbsolutePath());
                     if (f.exists())
                     {
-                        currentSplit = new SplitFile(chooser.getSelectedFile().getAbsolutePath());
+                        setCurrent_splitfile(new SplitFile(chooser.getSelectedFile().getAbsolutePath()));
                         segmentList = new ArrayList<List<Long>>();
-                        for (List<Long> trial : currentSplit.Trials()) {
+                        for (List<Long> trial : getCurrent_splitfile().Trials()) {
                             segmentList.add(trial);
                         }
-                        headerList = new ArrayList<String>(currentSplit.parts);
+                        headerList = new ArrayList<String>(getCurrent_splitfile().headers);
                         UpdateListings();
                     }
                 }
@@ -108,11 +115,11 @@ public class FilePanel extends JPanel
                         headerList.set(i, headerEditors.get(i).getText());
                     }
 
-                    currentSplit = new SplitFile(chooser.getSelectedFile().getAbsolutePath(), headerList);
+                    setCurrent_splitfile(new SplitFile(chooser.getSelectedFile().getAbsolutePath(), headerList));
 
                     for (List<Long> segment : segmentList)
                     {
-                        currentSplit.AppendLine(segment);
+                        getCurrent_splitfile().AppendTrial(segment);
                     }
 
                     System.out.println("Saved.");
@@ -135,7 +142,7 @@ public class FilePanel extends JPanel
 
                 segmentList = new ArrayList<List<Long>>();
 
-                currentSplit = new SplitFile("temp_splits", headerList);
+                setCurrent_splitfile(new SplitFile("temp_splits", headerList));
 
                 UpdateListings();
             }
@@ -161,7 +168,7 @@ public class FilePanel extends JPanel
         }
 
 
-        if (currentSplit != null)
+        if (getCurrent_splitfile() != null)
         {
             listingPanel = new JPanel();
             listingPanel.setLayout(new BorderLayout());
@@ -169,7 +176,7 @@ public class FilePanel extends JPanel
             // Headers
 
             final JPanel headers = new JPanel();
-            headers.setLayout(new GridLayout(1, currentSplit.parts.size()+1));
+            headers.setLayout(new GridLayout(1, getCurrent_splitfile().headers.size()+1));
 
             headerEditors = new ArrayList<JTextArea>();
 
@@ -226,7 +233,7 @@ public class FilePanel extends JPanel
 
             JPanel segments = new JPanel();
 
-            List<List<Long>> trials = currentSplit.Trials();
+            List<List<Long>> trials = getCurrent_splitfile().Trials();
 
             if (trials.size() > 0)
             {
@@ -242,19 +249,19 @@ public class FilePanel extends JPanel
 
                 segmentRemovers = new ArrayList<JButton>();
 
-                List<List<Long>> converted_trials = segmentList;
+                List<List<Long>> runs = segmentList;
 
                 if (betweenSegments)
-                    converted_trials = SplitFile.timeBetweenSegmentsForSplits(converted_trials);
+                    runs = SplitMath.timeBetweenSplitsInRuns(runs);
 
-                for (List<Long> trial : converted_trials)
+                for (List<Long> run : runs)
                 {
                     if (inSeconds)
-                        for (Double segment : SplitFile.segmentsInSeconds(trial)) {
+                        for (Double segment : SplitMath.splitsInSeconds(run)) {
                             segments.add(new JLabel((String.valueOf((double) Math.round(segment * 1000) / 1000))));
                         }
                     else
-                        for (Long segment : trial) {
+                        for (Long segment : run) {
                             segments.add(new JLabel(segment.toString()));
                         }
 
@@ -310,7 +317,7 @@ public class FilePanel extends JPanel
 
     private void UpdateListings()
     {
-        if (currentSplit != null) {
+        if (getCurrent_splitfile() != null) {
             if (headerEditors == null)
             {
                 headerEditors = new ArrayList<JTextArea>();
@@ -322,13 +329,20 @@ public class FilePanel extends JPanel
                 remove(listingPanel);
             add(Listings(), BorderLayout.CENTER);
             revalidate();
-            save.setEnabled(true);
-            ((MainFrame) this.getTopLevelAncestor()).splitButton.setEnabled(true);
-            ((MainFrame) this.getTopLevelAncestor()).statsButton.setEnabled(true);
         }
         else
         {
             save.setEnabled(false);
         }
+    }
+
+    public SplitFile getCurrent_splitfile() {
+        return current_splitfile;
+    }
+
+    public void setCurrent_splitfile(SplitFile current_splitfile) {
+        this.current_splitfile = current_splitfile;
+        ((MainFrame) this.getTopLevelAncestor()).setCurrent_splitfile(current_splitfile);
+        save.setEnabled(true);
     }
 }

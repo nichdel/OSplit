@@ -11,7 +11,6 @@ import java.util.List;
 
 public class SplitPanel extends JPanel
 {
-    private static final long CENTISECOND = 10000000;
 
     private List<JLabel> time_list;
     private int current;
@@ -24,14 +23,18 @@ public class SplitPanel extends JPanel
     public boolean finished = false;
     Provider provider = Provider.getCurrentProvider(true);
 
+    /**
+     * The panel that you use while splitting
+     * @param split
+     */
     public SplitPanel(SplitFile split)
     {
         this.split = split;
-        final int rows = split.parts.size();
+        final int rows = split.headers.size();
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
-        JLabel title = new JLabel(split.file_path, JLabel.CENTER);
+        JLabel title = new JLabel(split.file_name, JLabel.CENTER);
         panel.add(title, BorderLayout.NORTH);
 
         JPanel split_panel = new JPanel();
@@ -39,7 +42,7 @@ public class SplitPanel extends JPanel
 
         List<JLabel> label_list = new ArrayList<JLabel>();
         time_list = new ArrayList<JLabel>();
-        for (String segment : split.parts)
+        for (String segment : split.headers)
         {
             JLabel label = new JLabel(segment, JLabel.CENTER);
             label_list.add(label);
@@ -62,15 +65,18 @@ public class SplitPanel extends JPanel
         RegisterHotkeys();
     }
 
+    /**
+     * Starts both the real timer (SplitTimer) and the graphical one
+     */
     public void StartTiming()
     {
         timer = new Timer(10, null);
-        time = CENTISECOND;
+        time = SplitMath.NANOSECONDS_PER_CENTISECONDS;
         ActionListener listener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                time += CENTISECOND;
-                String timed = NanoToString(time);
+                time += SplitMath.NANOSECONDS_PER_CENTISECONDS;
+                String timed = SplitMath.NanoToTimeString(time);
                 total.setText(timed);
                 time_list.get(current).setText(timed);
                 }
@@ -80,79 +86,39 @@ public class SplitPanel extends JPanel
         started = true;
     }
 
-    // FIXME: Rewrite this such that it returns a true or false dependent on whether there is a remaining time.
+    // TODO: Rewrite this such that it returns a true or false dependent on whether there is a remaining time.
+
+    /**
+     * This advances the split and records to actual final time.
+     * @param final_time
+     * @return
+     */
     public boolean AdvanceSplit(long final_time)
     {
-        time_list.get(current).setText(NanoToString(final_time));
+        time_list.get(current).setText(SplitMath.NanoToTimeString(final_time));
         current++;
 
         if (current >= time_list.size())
         {
             timer.stop();
             finished = true;
-            total.setText(NanoToString(final_time));
+            total.setText(SplitMath.NanoToTimeString(final_time));
         }
 
         return true;
     }
 
-    private static String NanoToString(long nanoseconds)
-    {
-        // Constants for units of time. Self explanatory.
-        final long SECOND = 100 * CENTISECOND;
-        final long MINUTE = 60 * SECOND;
-        final long HOUR = 60 * MINUTE;
-        final long DAY = 24 * HOUR;
-
-        // We subtract from this one
-        // We need to continue to know the total to avoid, ie, omitting the seconds slot when there's exactly 4 minutes.
-        long ns = nanoseconds;
-
-        String in_string = "";
-
-        long milliseconds, seconds, minutes, hours, days;
-
-        // FIXME: Maybe this can be done in reverse, avoiding the two counts of nanoseconds.
-        if (nanoseconds >= DAY)
-        {
-            days = ns / DAY;
-            in_string += days + ":";
-            ns %= DAY;
-        }
-        if (nanoseconds >= HOUR)
-        {
-            hours = ns / HOUR;
-            in_string += AddLeadingZeros(hours, 2) + ":";
-            ns %= HOUR;
-        }
-        if (nanoseconds >= MINUTE)
-        {
-            minutes = ns / MINUTE;
-            in_string += AddLeadingZeros(minutes, 2) + ":";
-            ns %= MINUTE;
-        }
-        if (nanoseconds >= SECOND)
-        {
-            seconds = ns / SECOND;
-            in_string += AddLeadingZeros(seconds, 2) + ".";
-            ns %= SECOND;
-        }
-        if (nanoseconds >= CENTISECOND)
-        {
-            milliseconds = ns / CENTISECOND;
-            in_string += AddLeadingZeros(milliseconds, 2);
-        }
-
-        return in_string;
-    }
-
+    // FIXME: Move most of this to MainFrame.
+    /**
+     * Registers the relevant hotkeys
+     */
     public void RegisterHotkeys()
     {
         HotKeyListener listener = new HotKeyListener() {
             public void onHotKey(HotKey hotKey) {
                 if (!started)
                 {
-                    splitTimer = new SplitTimer(split.parts.size());
+                    splitTimer = new SplitTimer(split.headers.size());
                     StartTiming();
                 }
                 else
@@ -163,24 +129,13 @@ public class SplitPanel extends JPanel
                     }
                     else
                     {
-                        split.AppendLine(splitTimer.times);
+                        split.AppendTrial(splitTimer.times);
                         provider.reset();
                     }
                 }
             }
         };
         provider.register(KeyStroke.getKeyStroke("shift S"), listener);
-    }
-
-    private static String AddLeadingZeros(long number, int digits)
-    {
-        String num = String.valueOf(number);
-        int zeros = digits - num.length();
-
-        for (int i = 0; i < zeros; i++) {
-            num = 0 + num;
-        }
-        return num;
     }
 
     public void UnregisterHotkeys()

@@ -1,8 +1,8 @@
 import javax.swing.*;
 import java.io.File;
 
-// FIXME: Perhaps move all the numeric conversions to a Time.java class?
-// FIXME: Learn best practice for comments in Java.
+// TODO: Learn best practice for comments in Java.
+
 public class GraphicalOSplit
 {
     private static MainFrame frame;
@@ -20,9 +20,9 @@ public class GraphicalOSplit
             System.out.println("File does not exist. Either specify an existing file or run without arguments" +
                     "and create a file within the GUI.");
 
-        // FIXME: Is it best practice to put these here or in the Frame constructor?
+        // TODO: Is it best practice to put these here or in the Frame constructor?
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // FIXME: More appropriate dimensions (for the 99% that use a floating wm)
+        // TODO: More appropriate dimensions (for the 99% that use a floating wm)
         frame.setSize(500,500);
         frame.setVisible(true);
     }

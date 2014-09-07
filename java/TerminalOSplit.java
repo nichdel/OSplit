@@ -36,11 +36,11 @@ public class TerminalOSplit
             if (!split.Trials().isEmpty())
             {
                 System.out.print("Personal Best:");
-                System.out.println(SplitFile.segmentsInSeconds(SplitFile.timeBetweenSegments(SplitStats.PersonalBest(split.Trials()))));
+                System.out.println(SplitMath.splitsInSeconds(SplitMath.timeBetweenSplits(SplitStats.PersonalBest(split.Trials()))));
                 System.out.print("Best of Segments:");
-                System.out.println(SplitFile.segmentsInSeconds(SplitStats.BestSegments(split.Trials())));
+                System.out.println(SplitMath.splitsInSeconds(SplitStats.BestSegments(split.Trials())));
                 System.out.print("Averages:");
-                System.out.println(SplitFile.segmentsInSeconds(SplitStats.SegmentAverages(split.Trials())));
+                System.out.println(SplitMath.splitsInSeconds(SplitStats.SegmentAverages(split.Trials())));
 
             }
         }
@@ -51,7 +51,7 @@ public class TerminalOSplit
     {
         if (timer == null)
         {
-            timer = new SplitTimer(split.parts.size());
+            timer = new SplitTimer(split.headers.size());
             System.out.println("TIMER STARTED");
             return false;
         }
@@ -68,7 +68,7 @@ public class TerminalOSplit
             {
                 System.out.print("TIMER RESULTS: ");
                 System.out.println(timer.times);
-                split.AppendLine(timer.times);
+                split.AppendTrial(timer.times);
                 provider.reset();
                 provider.stop();
                 System.exit(0);

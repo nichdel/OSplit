@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
-// FIXME: I need to consider standardizing how these are calculated and displayed.
+// TODO: I need to consider standardizing how these are calculated and displayed.
 // IE, BestSegments comes out in time between segments, but Personal Best does not.
 
 public class SplitStats
@@ -24,7 +24,7 @@ public class SplitStats
     public static List<Long> BestSegments(List<List<Long>> splits)
     {
         final int split_length = splits.get(0).size();
-        final List<List<Long>> inSeconds = SplitFile.timeBetweenSegmentsForSplits(splits);
+        final List<List<Long>> inSeconds = SplitMath.timeBetweenSplitsInRuns(splits);
 
         List<Long> best = new ArrayList<Long>();
 
@@ -49,7 +49,7 @@ public class SplitStats
         final int split_count = splits.size();
         final int segments = splits.get(0).size();
         List<Long> averaged_segments = new ArrayList<Long>();
-        final List<List<Long>> inSeconds = SplitFile.timeBetweenSegmentsForSplits(splits);
+        final List<List<Long>> inSeconds = SplitMath.timeBetweenSplitsInRuns(splits);
 
         for (int i = 0; i < segments; i++)
         {

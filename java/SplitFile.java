@@ -8,29 +8,35 @@ public class SplitFile {
     final static String separator = ",";
 
     public String file_path;
-    public List<String> parts;
+    public String file_name;
+    public List<String> headers;
 
-    public SplitFile(String filename)
+    /**
+     * Attempts to open an existing SplitFile
+     * @param file_path Absolute file path
+     */
+    public SplitFile(String file_path)
     {
-        // FIXME: Refer to file_path and name separately
-        file_path = filename;
+        this.file_path = file_path;
+        file_name = (new File(file_path)).getName().split("\\.")[0];
 
         try
         {
-            Scanner in = new Scanner(new File(file_path));
-            parts = Arrays.asList(in.nextLine().split(separator));
+            Scanner in = new Scanner(new File(this.file_path));
+            headers = Arrays.asList(in.nextLine().split(separator));
             in.close();
         }
         catch (IOException exception)
         {
+            // TODO: Instead of defaulting to this, make the caller choose to
             System.out.println("Could not open file, it may not exist.");
             System.out.println("Attempting to create a new file with the given file_path. Please provide the headers");
             try
             {
                 BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
                 SplitFile badHack;
-                badHack = new SplitFile(filename, Arrays.asList(in.readLine().split(separator)));
-                this.parts = badHack.parts;
+                badHack = new SplitFile(file_path, Arrays.asList(in.readLine().split(separator)));
+                this.headers = badHack.headers;
 
             }
             catch (IOException exception2)
@@ -40,24 +46,29 @@ public class SplitFile {
         }
     }
 
-    public SplitFile(String filename, List<String> parts)
+    /**
+     * Attempts to create a new file
+     * @param file_path Absolute file path, if it doesn't end in .csv we add it
+     * @param headers List of headers
+     */
+    public SplitFile(String file_path, List<String> headers)
     {
-        file_path = filename;
-        if (!file_path.contains(".csv"))
+        this.file_path = file_path;
+        if (!this.file_path.contains(".csv"))
         {
-            file_path += ".csv";
+            this.file_path += ".csv";
         }
-        this.parts = parts;
+        this.headers = headers;
 
         FileWriter out;
         try
         {
-            out = new FileWriter(file_path);
+            out = new FileWriter(this.file_path);
 
-            for (int i = 0; i < parts.size(); i++)
+            for (int i = 0; i < headers.size(); i++)
             {
-                out.write(parts.get(i));
-                if (i != parts.size()-1)
+                out.write(headers.get(i));
+                if (i != headers.size()-1)
                 {
                     out.write(separator);
                 }
@@ -72,7 +83,12 @@ public class SplitFile {
         }
     }
 
-    private List<Long> Separate(String line)
+    /**
+     * Helper function to separate lines correctly.
+     * @param line A string such as "Header 1,Header 2,Header 3"
+     * @return A list such as ["Header 1", "Header 2", "Header 3"]
+     */
+    private static List<Long> Separate(String line)
     {
         final List<String> separated_strings = Arrays.asList(line.split(separator));
 
@@ -85,6 +101,10 @@ public class SplitFile {
         return separated_longs;
     }
 
+    /**
+     * Check the file for a list of trials
+     * @return A list of trials, which are lists of nanoseconds from start.
+     */
     public List<List<Long>> Trials()
     {
         List<List<Long>> list_of_line_lists = new ArrayList<List<Long>>();
@@ -105,17 +125,22 @@ public class SplitFile {
         return list_of_line_lists;
     }
 
-    public boolean AppendLine(List<Long> entries)
+    /**
+     * Add a trial to the end of the file.
+     * @param trial A set of timings for a single trial
+     * @return whether successful
+     */
+    public boolean AppendTrial(List<Long> trial)
     {
         try
         {
             FileWriter out = new FileWriter(file_path, true);
 
-            for (int i = 0; i < entries.size(); i++)
+            for (int i = 0; i < trial.size(); i++)
             {
-                out.write(String.valueOf(entries.get(i)));
+                out.write(String.valueOf(trial.get(i)));
 
-                if (i != entries.size()-1)
+                if (i != trial.size()-1)
                 {
                     out.write(separator);
                 }
@@ -128,55 +153,5 @@ public class SplitFile {
         {
             return false;
         }
-    }
-
-    public static List<Double> segmentsInSeconds(List<Long> trial)
-    {
-        List<Double> inSeconds = new ArrayList<Double>();
-
-        for (Long segment : trial)
-        {
-            inSeconds.add((double) segment / 1000000000);
-        }
-
-        return inSeconds;
-    }
-
-    public static List<List<Double>> splitsInSeconds(List<List<Long>> trials)
-    {
-        List<List<Double>> inSeconds = new ArrayList<List<Double>>();
-
-        for (List<Long> trial : trials)
-        {
-            inSeconds.add(segmentsInSeconds(trial));
-        }
-
-        return inSeconds;
-    }
-
-    public static List<Long> timeBetweenSegments(List<Long> split)
-    {
-        List<Long> segments_by_time = new ArrayList<Long>();
-
-        segments_by_time.add(split.get(0));
-
-        for (int i=1; i < split.size(); i++)
-        {
-            segments_by_time.add(split.get(i)-split.get(i-1));
-        }
-
-        return segments_by_time;
-    }
-
-    public static List<List<Long>> timeBetweenSegmentsForSplits(List<List<Long>> splits)
-    {
-        List<List<Long>> betweenSegments = new ArrayList<List<Long>>();
-
-        for (List<Long> split : splits)
-        {
-            betweenSegments.add(timeBetweenSegments(split));
-        }
-
-        return betweenSegments;
     }
 }
