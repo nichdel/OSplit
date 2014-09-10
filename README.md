@@ -6,9 +6,9 @@ OSplit is an open source cross-platform SplitTimer primarily for usage by Speedr
 Current Features
 ================
 
-OSplit is cross-platform (it should work on Mac, Windows, and Linux*) open source split timer that provides the ability to start a timer and record segment times through hotkeys.
+OSplit is cross-platform (it should work on Mac, Windows, and Linux*) open source splitFile timer that provides the ability to start a timer and record segment times through hotkeys.
 
-OSplit records split times in .csv files, which are a standard file format for trial data. These .csv's can be imported into most spreadsheet software with ease.
+OSplit records splitFile times in .csv files, which are a standard file format for trial data. These .csv's can be imported into most spreadsheet software with ease.
 
 *More specifically, X11 environments, which constitutes nearly all Linux distros.
 
@@ -17,7 +17,7 @@ Graphical Edition
 
 The GUI is still lacking features, but very much useable. It can be opened via the command line with "java -jar OSplit.jar" but your Operating System of choice likely will open Java programs with a double click.
 
-The Timing page uses shift+s to start the timer, split, and save the timings (after the timer has stopped).
+The Timing page uses shift+s to start the timer, splitFile, and save the timings (after the timer has stopped).
 
 The File page allows you to open and save files as well as deleting splits and editing the headers. Note that changes made to a file are not remembered on other pages until you save the file.
 
@@ -42,7 +42,7 @@ The .csv created will record times in nanoseconds from the time the timer starte
 Statistical Features
 ====================
 
-OSplit hopes to provide additional utility over other split timers by offering the convenience of meaningful statistics.
+OSplit hopes to provide additional utility over other splitFile timers by offering the convenience of meaningful statistics.
 
 Currently, OSplit can report Personal Best, Best Segments (AKA IL), and Averages. Some measure of variance or spread will be available soon. Such measures enable you to see which segments are inconsistent (perhaps heavily RNG based or something you've not yet mastered) and which are consistent (something you do well, or where RNG is unimportant). This allows you to find points of potential improvement with ease.
 
